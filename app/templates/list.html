@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            max-width: 800px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px 0px #888888;
+            margin: 0 auto;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .edit-link, .delete-link {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            text-decoration: none;
+        }
+
+        .edit-link:hover, .delete-link:hover {
+            background-color: #45a049;
+        }
+    </style>
+<body>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Supplier</th>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Actions</th>
+        </tr>
+        {% for item in items %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.supplier }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ item.price }}</td>
+                <td>
+                    <a class="edit-link" href="/{{item.id}}/edit">Edit</a>
+                    <a class="delete-link" href="/{{item.id}}/delete">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+
+
+
+
+
+{% endblock %}

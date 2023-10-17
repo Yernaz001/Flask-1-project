@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+
+   
+<body>
+    
+    <h2>Supplier Information Form</h2>
+    <form action="" method="post">
+        <label for="supplier">Supplier:</label>
+        <input type="text" name="supplier" id="supplier" required>
+
+        <label for="name">Product Name:</label>
+        <input type="text" name="name" id="name" required>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" name="quantity" id="quantity" required>
+
+        <label for="price">Price:</label>
+        <input type="number" step="0.01" name="price" id="price" required>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+
+{% endblock %}
