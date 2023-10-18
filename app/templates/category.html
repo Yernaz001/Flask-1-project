@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<style>
+    table {
+        border-collapse: collapse;
+        width: 80%;
+        max-width: 800px;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px 0px #888888;
+        margin: 0 auto;
+    }
+
+    th, td {
+        text-align: left;
+        padding: 12px;
+    }
+
+    th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .edit-link, .delete-link {
+        background-color: #4CAF50;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 3px;
+        text-decoration: none;
+    }
+
+    .edit-link:hover, .delete-link:hover {
+        background-color: #45a049;
+    }
+</style>
+
+
+<body>
+    {% if message %}
+    <p>{{ message }}</p>
+    {% else %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+        {% for category in categories %}
+            <tr>
+                <td>{{ category.id }}</td>
+                <td>{{ category.name }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+
+
+</body>
+
+{% endif %}
+{% endblock %}

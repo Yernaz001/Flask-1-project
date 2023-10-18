@@ -1,48 +1,105 @@
 {% extends 'base.html' %}
 
-{% block head %}
-
-{% endblock %}
-
 {% block body %}
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            max-width: 800px;
-            background-color: #fff;
-            box-shadow: 0px 0px 10px 0px #888888;
-            margin: 0 auto;
-        }
+<style>
+    .pagination {
+        text-align: center;
+        display: inline-block;
+        background-color: #f2f2f2;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 80%;
+        max-width: 800px;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px 0px #888888;
+        margin: 0 auto;
+    }
 
-        th, td {
-            text-align: left;
-            padding: 12px;
-        }
+    th, td {
+        text-align: left;
+        padding: 12px;
+    }
 
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
+    th {
+        background-color: #4CAF50;
+        color: white;
+    }
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
 
-        .edit-link, .delete-link {
-            background-color: #4CAF50;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 3px;
-            text-decoration: none;
-        }
+    .edit-link {
+        background-color: #4CAF50;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 3px;
+        text-decoration: none;
+    }
+    .delete-link{
+        background-color: #e60a0a;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 3px;
+        text-decoration: none;
+    }
 
-        .edit-link:hover, .delete-link:hover {
-            background-color: #45a049;
-        }
-    </style>
+    .pagination-container {
+        text-align: center;
+        margin-top: 20px; 
+    }
+    
+    .pagination a {
+        text-decoration: none;
+        color: #333;
+        padding: 8px 16px;
+    }
+    .sort-options {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .sort-button {
+        display: inline-block;
+        background-color: #4CAF50;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 3px;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+    .sort-button:hover {
+        background-color: #45a049;
+    }
+    .sort-button.active {
+        background-color: #45a049;
+    }
+
+</style>
 <body>
+    <div class="sort-options">
+        <a class="sort-button {{ 'active' if request.args.sort_field == 'id' else '' }}" href="{{ url_for('getList', page=items.page, per_page=items.per_page, sort_field='id', sort_order=(request.args.sort_field == 'id' and 'desc' or 'asc')) }}">
+            Sort by ID
+        </a>
+        <a class="sort-button {{ 'active' if request.args.sort_field == 'name' else '' }}" href="{{ url_for('getList', page=items.page, per_page=items.per_page, sort_field='name', sort_order=(request.args.sort_field == 'name' and 'desc' or 'asc')) }}">
+            Sort by Name
+        </a>
+        <a class="sort-button {{ 'active' if request.args.sort_field == 'quantity' else '' }}" href="{{ url_for('getList', page=items.page, per_page=items.per_page, sort_field='quantity', sort_order=(request.args.sort_field == 'quantity' and 'desc' or 'asc')) }}">
+            Sort by Quantity
+        </a>
+        <a class="sort-button {{ 'active' if request.args.sort_field == 'price' else '' }}" href="{{ url_for('getList', page=items.page, per_page=items.per_page, sort_field='price', sort_order=(request.args.sort_field == 'price' and 'desc' or 'asc')) }}">
+            Sort by Price
+        </a>
+    </div>
+
+    {% if message %}
+    <p>{{ message }}</p>
+    {% else %}
     <table>
         <tr>
             <th>ID</th>
@@ -50,26 +107,57 @@
             <th>Name</th>
             <th>Quantity</th>
             <th>Price</th>
-            <th>Actions</th>
+            <th>Category ID</th>
+            <th>Action</th>
+            
         </tr>
-        {% for item in items %}
+        {% for item in items.items %}
             <tr>
                 <td>{{ item.id }}</td>
                 <td>{{ item.supplier }}</td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.quantity }}</td>
-                <td>${{ item.price }}</td>
-                <td>
-                    <a class="edit-link" href="/{{item.id}}/edit">Edit</a>
-                    <a class="delete-link" href="/{{item.id}}/delete">Delete</a>
-                </td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.category_id }}</td>
+                <td><a class="edit-link" href="{{ url_for('update', id=item.id) }}">Edit</a>
+                <a class="delete-link" href="{{ url_for('delete', id=item.id) }}">Delete</a></td>
+            
             </tr>
         {% endfor %}
     </table>
+    
+    {{ render_pagination(items) }} 
+
+
 </body>
 
-
-
-
+{% endif %}
 
 {% endblock %}
+{% macro render_pagination(pagination) %}
+<div class="pagination-container">
+        {% if pagination.has_prev %}
+            <a href="{{ url_for(request.endpoint, page=pagination.prev_num, per_page=pagination.per_page, sort_field=request.args.sort_field, sort_order=request.args.sort_order) }}">Previous</a>
+        {% else %}
+            <span class="disabled">Previous</span>
+        {% endif %}
+
+        {% for page_num in pagination.iter_pages() %}
+            {% if page_num %}
+                {% if page_num == pagination.page %}
+                    <span class="current">{{ page_num }}</span>
+                {% else %}
+                    <a href="{{ url_for(request.endpoint, page=page_num, per_page=pagination.per_page, sort_field=request.args.sort_field, sort_order=request.args.sort_order) }}">{{ page_num }}</a>
+                {% endif %}
+            {% else %}
+                <span class="ellipsis">...</span>
+            {% endif %}
+        {% endfor %}
+
+        {% if pagination.has_next %}
+            <a href="{{ url_for(request.endpoint, page=pagination.next_num, per_page=pagination.per_page, sort_field=request.args.sort_field, sort_order=request.args.sort_order) }}">Next</a>
+        {% else %}
+            <span class="disabled">Next</span>
+        {% endif %}
+    </div>
+{% endmacro %}
