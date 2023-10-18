@@ -2,12 +2,34 @@
 
 {% block body %}
 <style>
-    .pagination {
+   .pagination-container {
         text-align: center;
+        margin-top: 20px;
+    }
+
+    .pagination a {
         display: inline-block;
+        padding: 8px 12px;
+        text-decoration: none;
+        color: #333;
         background-color: #f2f2f2;
-        padding: 10px 20px;
+        border: 1px solid #ccc;
         border-radius: 5px;
+        margin: 2px;
+    }
+
+    .pagination a:hover {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .pagination .current {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .pagination .ellipsis {
+        font-weight: bold;
     }
     table {
         border-collapse: collapse;
@@ -49,16 +71,6 @@
         text-decoration: none;
     }
 
-    .pagination-container {
-        text-align: center;
-        margin-top: 20px; 
-    }
-    
-    .pagination a {
-        text-decoration: none;
-        color: #333;
-        padding: 8px 16px;
-    }
     .sort-options {
         text-align: center;
         margin-top: 20px;
@@ -126,38 +138,20 @@
         {% endfor %}
     </table>
     
-    {{ render_pagination(items) }} 
+    
 
 
 </body>
 
 {% endif %}
-
-{% endblock %}
-{% macro render_pagination(pagination) %}
 <div class="pagination-container">
-        {% if pagination.has_prev %}
-            <a href="{{ url_for(request.endpoint, page=pagination.prev_num, per_page=pagination.per_page, sort_field=request.args.sort_field, sort_order=request.args.sort_order) }}">Previous</a>
-        {% else %}
-            <span class="disabled">Previous</span>
-        {% endif %}
 
-        {% for page_num in pagination.iter_pages() %}
-            {% if page_num %}
-                {% if page_num == pagination.page %}
-                    <span class="current">{{ page_num }}</span>
-                {% else %}
-                    <a href="{{ url_for(request.endpoint, page=page_num, per_page=pagination.per_page, sort_field=request.args.sort_field, sort_order=request.args.sort_order) }}">{{ page_num }}</a>
-                {% endif %}
-            {% else %}
-                <span class="ellipsis">...</span>
-            {% endif %}
-        {% endfor %}
-
-        {% if pagination.has_next %}
-            <a href="{{ url_for(request.endpoint, page=pagination.next_num, per_page=pagination.per_page, sort_field=request.args.sort_field, sort_order=request.args.sort_order) }}">Next</a>
+   {% for page_num in items.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+        {% if page_num %}
+            <a class="pagination-link {{ 'current' if items.page == page_num else '' }}" href="{{ url_for('getList', page=page_num) }}">{{ page_num }}</a>
         {% else %}
-            <span class="disabled">Next</span>
+            <span class="ellipsis">...</span>
         {% endif %}
-    </div>
-{% endmacro %}
+    {% endfor %}
+</div>
+{% endblock %}
